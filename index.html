@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Jr_Tech_OFC</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #F5F5F5; color: #333; }
+        header { background-color: #007BFF; color: white; text-align: center; padding: 15px 0; }
+        main { padding: 20px; max-width: 400px; margin: 0 auto; background: #FFF; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        label { font-weight: bold; margin-bottom: 5px; display: block; }
+        input[type="number"], button { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #CCC; border-radius: 4px; }
+        button { background-color: #007BFF; color: white; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .result { margin-top: 20px; text-align: center; font-size: 18px; font-weight: bold; color: #007BFF; }
+        footer { text-align: center; margin-top: 20px; font-size: 14px; color: #666; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Calculadora De Impressão</h1>
+    </header>
+    <main>
+        <form id="calcForm">
+            <label for="xeroxPB">Xerox P&B (R$ 0,50 cada):</label>
+            <input type="number" id="xeroxPB" min="0" value="0">
+            
+            <label for="xeroxCMYK">Xerox Colorida (R$ 1,00 cada):</label>
+            <input type="number" id="xeroxCMYK" min="0" value="0">
+            
+            <label for="impressaoPB">Impressão P&B (R$ 1,50 cada):</label>
+            <input type="number" id="impressaoPB" min="0" value="0">
+            
+            <label for="impressaoCMYK">Impressão Colorida (R$ 2,00 cada):</label>
+            <input type="number" id="impressaoCMYK" min="0" value="0">
+            
+            <label for="fotos3x4">Fotos 3x4 (R$ 1,00 cada):</label>
+            <input type="number" id="fotos3x4" min="0" value="0">
+        </form>
+
+        <div class="result" id="resultado"><strong>Total: R$ 0,00</strong></div>
+
+        <button type="button" onclick="finalizar()">Finalizar</button>
+    </main>
+    <footer>
+        © 2025 - Jr_Tech_OFC - Todos os direitos reservados.
+    </footer>
+
+    <script>
+        // Atualiza o valor total em tempo real
+        const inputs = document.querySelectorAll("input[type='number']");
+        const resultadoDiv = document.getElementById("resultado");
+
+        function atualizarTotal() {
+            const xeroxPB = Number(document.getElementById("xeroxPB").value) || 0;
+            const xeroxCMYK = Number(document.getElementById("xeroxCMYK").value) || 0;
+            const impressaoPB = Number(document.getElementById("impressaoPB").value) || 0;
+            const impressaoCMYK = Number(document.getElementById("impressaoCMYK").value) || 0;
+            const fotos3x4 = Number(document.getElementById("fotos3x4").value) || 0;
+
+            const total = xeroxPB * 0.50 + xeroxCMYK * 1.00 + impressaoPB * 1.50 + impressaoCMYK * 2.00 + fotos3x4 * 1.00;
+            resultadoDiv.innerHTML = `<strong>Total: R$ ${total.toFixed(2)}</strong>`;
+        }
+
+        // Adiciona o evento de input a todos os campos numéricos
+        inputs.forEach(input => {
+            input.addEventListener("input", atualizarTotal);
+        });
+
+        // Função para enviar os dados ao servidor
+        function finalizar() {
+            const xeroxPB = Number(document.getElementById("xeroxPB").value) || 0;
+            const xeroxCMYK = Number(document.getElementById("xeroxCMYK").value) || 0;
+            const impressaoPB = Number(document.getElementById("impressaoPB").value) || 0;
+            const impressaoCMYK = Number(document.getElementById("impressaoCMYK").value) || 0;
+            const fotos3x4 = Number(document.getElementById("fotos3x4").value) || 0;
+
+            const total = xeroxPB * 0.50 + xeroxCMYK * 1.00 + impressaoPB * 1.50 + impressaoCMYK * 2.00 + fotos3x4 * 1.00;
+
+            // Envia os dados para o servidor
+            fetch("/finalizar", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    xeroxPB,
+                    xeroxCMYK,
+                    impressaoPB,
+                    impressaoCMYK,
+                    fotos3x4,
+                    total,
+                }),
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                alert(data.message);
+            })
+            .catch((error) => {
+                console.error("Erro:", error);
+            });
+        }
+    </script>
+</body>
+</html>
+
